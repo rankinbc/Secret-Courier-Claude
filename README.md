@@ -94,8 +94,8 @@ sequenceDiagram
     O->>S: read value into the child's environment only
     O->>G: gh release create v1.2.0 (GITHUB_TOKEN set)
     G-->>O: exit 0
-    O-->>C: exit 0 - "Ran gh with GITHUB_TOKEN set in its environment only; the value is gone with it."
-    C-->>D: Release v1.2.0 is published. The token stayed on your machine; I only used its name.
+    O-->>C: exit 0 - "Ran gh with GITHUB_TOKEN set in its environment only. The value is gone with it."
+    C-->>D: Release v1.2.0 is published. The token stayed on your machine, I only used its name.
 ```
 
 What the developer sees in the console that opens at step 4:
