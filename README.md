@@ -1,5 +1,9 @@
 # secret-courier
 
+[![CI](https://github.com/rankinbc/secret-courier/actions/workflows/ci.yml/badge.svg)](https://github.com/rankinbc/secret-courier/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/rankinbc/secret-courier?filter=secret-courier--v*)](https://github.com/rankinbc/secret-courier/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A Claude Code plugin that moves secrets around **by name**, so the model never sees a value and nothing is
 left lying around.
 
@@ -26,7 +30,7 @@ only.
 ## Install
 
 ```
-claude plugin marketplace add <github-owner>/secret-courier      (or the repository URL, or a local clone path)
+claude plugin marketplace add rankinbc/secret-courier
 claude plugin install secret-courier@secret-courier
 ```
 
