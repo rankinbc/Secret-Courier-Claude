@@ -20,8 +20,8 @@ WRITE_PATH_MSG = (
     "Store the value with `courier prompt <name>` and reference it by name (secret-courier)."
 )
 WRITE_CONTENT_MSG = (
-    "Blocked: the content carries {what}. Store the value with `courier prompt <name>`; scripts that print or "
-    "decrypt secret values are never written (secret-courier)."
+    "Blocked: the content carries {what}. Store the value with `courier prompt <name>` and deliver it with "
+    "`courier run` or `courier inject`; scripts that print or decrypt secret values are never written (secret-courier)."
 )
 _EXEMPT_RE = re.compile(
     r"(?i)(?:^|/)tests?/"

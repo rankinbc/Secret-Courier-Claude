@@ -34,13 +34,16 @@ SECRET_VALUE_MSG = (
     "Blocked: the command contains a secret-shaped value ({rules}). "
     "Store it with `courier prompt <name>` and reference it by name (secret-courier)."
 )
-SECRET_FILE_MSG = (
-    "Blocked: that command reads a secret-bearing file. Claude handles secret NAMES only (secret-courier)."
+_INSTEAD = (
+    "Instead: `courier exists <name>` says where a value is held; `courier run --env VAR=<store>:<name> -- <command>` "
+    "gives a program the value without printing it (secret-courier)."
 )
+SECRET_FILE_MSG = "Blocked: that command reads a secret-bearing file, and Claude handles secret NAMES only. " + _INSTEAD
 SCRIPT_FILE_MSG = (
-    "Blocked: the script that command runs {what}. Claude never runs a script that prints or decrypts secret values."
+    "Blocked: the script that command runs {what}. Claude never runs a script that prints or decrypts secret values. "
+    + _INSTEAD
 )
-EXPOSES_MSG = "Blocked: that command exposes secret values ({what}). Claude handles secret NAMES only (secret-courier)."
+EXPOSES_MSG = "Blocked: that command exposes secret values ({what}), and Claude handles secret NAMES only. " + _INSTEAD
 
 _SECRET_NAMES = POLICY.secret_env_names
 _DENIED_TOKEN_RE = re.compile(r"(?i)(?<![\w-])(?:" + "|".join(POLICY.value_dump_tokens) + r")(?![\w-])")

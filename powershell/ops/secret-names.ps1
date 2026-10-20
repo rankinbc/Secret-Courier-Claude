@@ -7,5 +7,6 @@ try {
         $held = if ($r.stores.Count) { ($r.stores -join ',') } else { 'MISSING' }
         Write-Output "$($r.name) $held $($r.description)"
     }
+    Write-Info "$($rows.Count) name$(if ($rows.Count -ne 1) { 's' }) known. 'dpapi' = encrypted file store under $(Get-CourierHome); 'credman' = Windows Credential Manager; MISSING = named in the manifest but holding no value. No value was read."
     Write-Status 'listed' "$($rows.Count)" 'names'
 } catch { Write-StatusError $_.Exception.Message 'names' }

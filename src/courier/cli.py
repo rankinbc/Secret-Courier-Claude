@@ -75,7 +75,29 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--json", action="store_true")
     s = sub.add_parser("doctor", help="is the plugin wired and fail-closed on this machine?")
     s.add_argument("--json", action="store_true")
+    s = sub.add_parser("log", help="what the plugin did and when (the audit log; names only)")
+    s.add_argument("-n", type=int, default=20, help="last N entries (default 20)")
     return p
+
+
+def _log(n: int) -> int:
+    import json
+
+    from courier.paths import audit_file
+
+    path = audit_file()
+    if not path.exists():
+        print("no audit log yet: nothing has run")
+        return 0
+    entries = path.read_text(encoding="utf-8", errors="replace").splitlines()[-max(n, 1) :]
+    for raw in entries:
+        try:
+            e = json.loads(raw)
+        except ValueError:
+            continue
+        print(f"{e.get('ts', '')}  {e.get('op', ''):<8} {e.get('status', ''):<8} {e.get('detail', '')}")
+    print(f"{len(entries)} entries from {path} (names and statuses only; values are never logged)")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -101,6 +123,8 @@ def main(argv: list[str] | None = None) -> int:
         return _report(bridge.sinks(args.repo))
     if args.cmd == "sweep":
         return _report(bridge.sweep(args.id, args.older_days, args.repo, args.dry_run))
+    if args.cmd == "log":
+        return _log(args.n)
     if args.cmd == "scan":
         from courier.scan import main as scan_main
 

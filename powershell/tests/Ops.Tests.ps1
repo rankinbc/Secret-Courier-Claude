@@ -24,7 +24,10 @@ Describe 'ops/*.ps1' {
     }
 
     It 'exists: found / missing' {
-        (& $script:Run 'secret-exists' @($script:Name)).status | Should -Be 'STATUS found dpapi'
+        $r = & $script:Run 'secret-exists' @($script:Name)
+        $r.status | Should -Be 'STATUS found dpapi'
+        $r.out | Should -BeLike "*is held in the DPAPI file store*"
+        $r.out | Should -BeLike "*was not read*"
         (& $script:Run 'secret-exists' @('pester-absent-name')).status | Should -Be 'STATUS missing'
         (& $script:Run 'secret-exists' @('Bad Name')).status | Should -BeLike 'STATUS error*'
     }
@@ -77,6 +80,7 @@ Describe 'ops/*.ps1' {
         $r = & $script:Run 'secret-inject' @('-Target', $target, '-Format', 'dotenv', '-Map', "API_KEY=dpapi:$($script:Name)")
         $r.status | Should -BeLike 'STATUS stored *keys=1'
         $r.out | Should -Not -BeLike "*$($script:FakeValue)*"
+        $r.out | Should -BeLike "*courier sweep --id *"
         [IO.File]::ReadAllText($target) | Should -BeLike "*API_KEY=$($script:FakeValue)*"
         (& $script:Run 'secret-sinks' @()).out | Should -BeLike "*dotenv *.env keys=API_KEY*"
         (& $script:Run 'secret-sweep' @('-WhatIf')).status | Should -Be 'STATUS listed 1'

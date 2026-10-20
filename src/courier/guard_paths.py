@@ -12,7 +12,11 @@ import re
 
 from courier.policy import POLICY, Policy
 
-READ_BLOCK_MSG = "Blocked: that file holds secret values. Use `courier exists <name>` for names only (secret-courier)."
+READ_BLOCK_MSG = (
+    "Blocked: that file holds secret values, and Claude handles names only. `courier exists <name>` says where a "
+    "value is held; `courier run --env VAR=<store>:<name> -- <command>` or `courier inject` deliver it to a program "
+    "without showing it (secret-courier)."
+)
 
 _HOME_PREFIX_RE = re.compile(
     r"(?i)^(?:~|\$HOME|\$\{HOME\}|%USERPROFILE%|\$env:USERPROFILE|\$\{env:USERPROFILE\})(?=/|$)"

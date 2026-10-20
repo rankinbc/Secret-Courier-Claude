@@ -21,12 +21,14 @@ try {
     foreach ($var in $envMap.Keys) {
         if ($var -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') { throw 'an environment variable name is letters, digits and _' }
         $s, $n = Split-StoreName ([string]$envMap[$var]) 'env'
-        if (-not (Get-CourierStoreExists -Store $s -Name $n)) { Write-Status 'missing' $n 'run'; exit 0 }
+        if (-not (Get-CourierStoreExists -Store $s -Name $n)) { Write-Info "${s}:$n holds no value; the command was not started."; Write-Status 'missing' $n 'run'; exit 0 }
         $psi.Environment[$var] = Get-CourierSecretValue -Store $s -Name $n
     }
+    $vars = @($envMap.Keys) -join ', '
     $p = [System.Diagnostics.Process]::Start($psi)
     $p.WaitForExit()
     $psi = $null
+    Write-Info "Ran $($command[0]) with $vars set in its environment only; the process has exited with code $($p.ExitCode) and the value is gone with it. Nothing was written to disk."
     Write-Status 'exit' "$($p.ExitCode)" 'run'
     exit $p.ExitCode
 } catch { Write-StatusError $_.Exception.Message 'run' }

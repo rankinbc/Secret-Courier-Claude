@@ -15,5 +15,11 @@ try {
         $res = Remove-CourierSink -Id $r.id -WhatIf:$WhatIf
         if ($res) { Write-Output "$($res.action) $($res.path) keys=$(@($res.keys) -join ',')"; $n++ }
     }
-    if ($WhatIf) { Write-Status 'listed' "$n" 'sweep' } else { Write-Status 'swept' "$n" 'sweep' }
+    if ($WhatIf) {
+        Write-Info "$n plaintext cop$(if ($n -eq 1) { 'y' } else { 'ies' }) would be removed; nothing was changed (dry run)."
+        Write-Status 'listed' "$n" 'sweep'
+    } else {
+        Write-Info "Removed the keys this plugin wrote from $n file$(if ($n -ne 1) { 's' }) (a file left empty was deleted) and dropped the ledger entries. The encrypted stores are untouched."
+        Write-Status 'swept' "$n" 'sweep'
+    }
 } catch { Write-StatusError $_.Exception.Message 'sweep' }

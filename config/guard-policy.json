@@ -39,7 +39,7 @@
     "authkey.p8", ".git/config", ".claude/.credentials.json", ".docker/config.json", ".kube/config",
     ".aws/credentials", "gh/hosts.yml", "proc/self/environ"
   ],
-  "allowed_files": ["\\.env\\.(?:example|template|sample)", "secrets\\.manifest\\.json", "sinks\\.json", "guard-policy\\.json", "config\\.json"],
+  "allowed_files": ["\\.env\\.(?:example|template|sample)", "secrets\\.manifest\\.json", "sinks\\.json", "guard-policy\\.json", "config\\.json", "audit\\.jsonl"],
   "allowed_dirs": ["tests/fixtures"],
   "secret_env_names": "(?:[A-Z][A-Z0-9]*_)*(?:PAT|TOKEN|SECRET|PASSWORD|PASSWD|PWD|API_?KEY|ACCESS_KEY|PRIVATE_KEY|CLIENT_SECRET)(?:_[A-Z0-9]+)*",
   "value_dump_tokens": [

@@ -4,5 +4,11 @@ param([Parameter(Mandatory)][string]$Name)
 try {
     Test-CourierName $Name
     $s = Find-CourierStore -Name $Name
-    if ($s) { Write-Status 'found' $s 'exists' } else { Write-Status 'missing' '' 'exists' }
+    if ($s) {
+        Write-Info "'$Name' is held in $(Get-StoreDescription $s $Name). Its value was not read for this check."
+        Write-Status 'found' $s 'exists'
+    } else {
+        Write-Info "No store holds '$Name' (checked dpapi, credman and the environment). Run 'courier prompt $Name' to enter it at a masked prompt."
+        Write-Status 'missing' '' 'exists'
+    }
 } catch { Write-StatusError $_.Exception.Message 'exists' }

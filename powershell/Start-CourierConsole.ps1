@@ -20,6 +20,7 @@ try {
     } else {
         Start-Process -FilePath $pwsh -ArgumentList $argList | Out-Null
     }
+    Write-Output "A console window titled '$Title' opened on this machine. Type or paste the value there; the window shows nothing while you type and explains where the value goes. Claude learns only the name and that it was stored; check with 'courier exists <name>' afterwards."
     Write-Output "STATUS opened $Title"
 } catch {
     Write-Output "STATUS error $($_.Exception.Message)"

@@ -50,8 +50,15 @@ In a session Claude follows the `secret-courier` skill; you can also drive it yo
 /courier sweep --dry-run                          what a sweep would remove
 /courier sweep                                    remove them
 /courier names                                    every name the store knows, and where
+/courier log                                      what the plugin did and when (names only)
 /courier scan src                                 find secret-shaped values in files (never prints one)
 ```
+
+Every command answers with a sentence about what happened to the value and where it is now, then a status
+line. For example `exists` says "'github-pat' is held in Windows Credential Manager as
+'secret-courier/github-pat', encrypted by the OS for the account you; its value was not read for this check",
+and `inject` names the ledger id and the `sweep` command that removes the copy again. The console that `prompt`
+opens explains where the value goes before you type it.
 
 The same commands run from any shell: `"<plugin root>\scripts\courier.cmd" <command>`.
 

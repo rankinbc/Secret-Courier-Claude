@@ -14,7 +14,7 @@ try {
     Test-CourierName $Name
     if ($Url -notmatch '^https://') { throw 'endpoint must be https' }
     $store = Find-CourierStore -Name $Name
-    if (-not $store) { Write-Status 'missing' '' 'test'; exit 0 }
+    if (-not $store) { Write-Info "No store holds '$Name'; nothing was sent."; Write-Status 'missing' '' 'test'; exit 0 }
     $value = Get-CourierSecretValue -Store $store -Name $Name
     $client = [System.Net.Http.HttpClient]::new()
     try {
@@ -31,5 +31,7 @@ try {
         $resp = $client.SendAsync($req).GetAwaiter().GetResult()
         $code = [int]$resp.StatusCode
     } finally { $value = $null; $client.Dispose() }
+    $host_ = ([Uri]$Url).Host
+    Write-Info "Sent one GET to $host_ over HTTPS with '$Name' in the $Auth header; the response code was $code. The value was held in memory for that request only and was not logged."
     if ($code -eq $Expect) { Write-Status 'valid' "$code" 'test' } else { Write-Status 'invalid' "$code" 'test' }
 } catch { Write-StatusError $_.Exception.Message 'test' }
