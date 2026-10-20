@@ -128,20 +128,28 @@ flowchart TD
     classDef allow fill:#238636,stroke:#238636,color:#fff
     classDef step fill:#30363d,stroke:#8b949e,color:#e6edf3
 
-    A["Tool call: Bash / PowerShell / Read / Write ..."]:::step --> B{"Interpreter found,<br/>guard started, no timeout?"}:::step
-    B -- no --> X1["Refused: fail closed"]:::block
-    B -- yes --> C{"Secret-shaped value<br/>in the command or content?"}:::step
-    C -- yes --> X2["Refused: store it by name"]:::block
-    C -- no --> D{"Prints or decrypts values?<br/>printenv, ConvertFrom-SecureString,<br/>az keyvault secret show, aws secretsmanager ..."}:::step
-    D -- yes --> X3["Refused: names only"]:::block
-    D -- no --> E{"Touches a secret file family?<br/>.env*, secrets.json, id_rsa, *.pem, ~/.ssh ...<br/>incl. globs, backups, 8.3 names, symlinks"}:::step
-    E -- "yes, and the program can read content" --> X4["Refused"]:::block
-    E -- "yes, but only metadata: ls, Test-Path, git status" --> F{"Fed into a reader by a pipe<br/>or command substitution?"}:::step
-    F -- yes --> X5["Refused: tainted consumer"]:::block
+    A["Tool call"]:::step --> B{"Guard ran?"}:::step
+    B -- "no interpreter / crash / timeout" --> X1["Refused<br/>fail closed"]:::block
+    B -- yes --> C{"Secret-shaped<br/>value?"}:::step
+    C -- yes --> X2["Refused<br/>store it by name"]:::block
+    C -- no --> D{"Dumps or decrypts<br/>values?"}:::step
+    D -- yes --> X3["Refused<br/>names only"]:::block
+    D -- no --> G{"Script file or<br/>nested shell?"}:::step
+    G -- yes --> H["scan the script,<br/>recurse into it"]:::step --> C
+    G -- no --> E{"Touches a<br/>secret file?"}:::step
+    E -- "reads content" --> X4["Refused"]:::block
+    E -- "metadata only<br/>(ls, Test-Path)" --> F{"Piped into<br/>a reader?"}:::step
+    F -- yes --> X5["Refused<br/>tainted consumer"]:::block
     F -- no --> OK["Allowed"]:::allow
-    E -- no --> G{"Runs a script file or a nested shell?"}:::step
-    G -- yes --> H["Scan the script / recurse into bash -c, pwsh -Command, cmd /c"]:::step --> C
-    G -- no --> OK
+    E -- no --> OK
+
+    N1["value shapes: JWT, PATs, cloud keys, key blocks,<br/>Authorization headers, NAME_PASSWORD=..."]:::note
+    N2["dumps: printenv, process.env, ConvertFrom-SecureString,<br/>az keyvault secret show, aws secretsmanager, vault kv get ..."]:::note
+    N3["files: .env*, secrets.json, id_rsa, *.pem, ~/.ssh ...<br/>plus globs, backups, 8.3 names, symlinks"]:::note
+    classDef note fill:#161b22,stroke:#30363d,color:#8b949e,font-size:11px
+    C -.- N1
+    D -.- N2
+    E -.- N3
 ```
 
 Refusals tell the agent what to do instead:
