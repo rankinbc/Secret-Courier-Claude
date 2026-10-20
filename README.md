@@ -129,25 +129,23 @@ Stored 'github-pat'. Nothing else was written.
 ## What the guard refuses
 
 ```mermaid
-flowchart TD
+flowchart LR
     classDef block fill:#da3633,stroke:#da3633,color:#fff
     classDef allow fill:#238636,stroke:#238636,color:#fff
     classDef step fill:#30363d,stroke:#8b949e,color:#e6edf3
 
-    A["Tool call"]:::step --> B{"Guard ran?"}:::step
-    B -- "no interpreter, crash, timeout" --> X1["Refused: fail closed"]:::block
-    B -- yes --> C{"Secret-shaped value?"}:::step
-    C -- yes --> X2["Refused: store it by name"]:::block
-    C -- no --> D{"Dumps or decrypts values?"}:::step
-    D -- yes --> X3["Refused: names only"]:::block
-    D -- no --> G{"Script file or nested shell?"}:::step
-    G -- yes --> H["scan it, recurse"]:::step --> C
-    G -- no --> E{"Touches a secret file?"}:::step
-    E -- "reads content" --> X4["Refused"]:::block
-    E -- "metadata only" --> F{"Piped into a reader?"}:::step
-    F -- yes --> X5["Refused: tainted consumer"]:::block
-    F -- no --> OK["Allowed"]:::allow
-    E -- no --> OK
+    A["Tool call"]:::step --> B{"Guard<br/>ran?"}:::step
+    B -- no --> X1["Refused<br/>fail closed"]:::block
+    B -- yes --> C{"Secret-shaped<br/>value?"}:::step
+    C -- yes --> X2["Refused<br/>store it by name"]:::block
+    C -- no --> D{"Dumps or<br/>decrypts?"}:::step
+    D -- yes --> X3["Refused<br/>names only"]:::block
+    D -- no --> G{"Script or<br/>nested shell?"}:::step
+    G -- yes --> H["scan it,<br/>recurse"]:::step --> C
+    G -- no --> E{"Reads a<br/>secret file?"}:::step
+    E -- yes --> X4["Refused"]:::block
+    E -- "listing piped<br/>into a reader" --> X5["Refused<br/>tainted"]:::block
+    E -- no --> OK["Allowed"]:::allow
 ```
 
 - **Values**: JWTs, access tokens, cloud keys, private key blocks, `Authorization` headers,
