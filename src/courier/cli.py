@@ -29,7 +29,9 @@ def _report(result: bridge.Result) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="courier", description="Move secrets by NAME; the value never passes through Claude.")
+    p = argparse.ArgumentParser(
+        prog="courier", description="Move secrets by NAME; the value never passes through Claude."
+    )
     p.add_argument("--version", action="version", version=f"secret-courier {__version__}")
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -102,7 +104,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "scan":
         from courier.scan import main as scan_main
 
-        return scan_main(args.paths + (["--fail-on-findings"] if args.fail_on_findings else []) + (["--json"] if args.json else []))
+        return scan_main(
+            args.paths + (["--fail-on-findings"] if args.fail_on_findings else []) + (["--json"] if args.json else [])
+        )
     if args.cmd == "doctor":
         from courier.doctor import main as doctor_main
 

@@ -3,6 +3,12 @@
 A Claude Code plugin that moves secrets around **by name**, so the model never sees a value and nothing is
 left lying around.
 
+Claude is good at wiring up an API client, a deploy script or a local config. It should never have to see the
+token that makes it work. With this plugin the token goes from your keyboard into an encrypted store once, and
+from there, by name only, to wherever a job needs it: a child process, a git-ignored `.env`, an HTTPS probe.
+Hooks keep Claude's own tools away from secret files and value-printing commands, and a ledger remembers every
+plaintext copy so you can sweep them when the job is done.
+
 - The developer types a value once, at a masked prompt in a console the plugin opens. It lands in a DPAPI
   encrypted store or Windows Credential Manager.
 - Claude asks for it by name: into a child process environment (`courier run`), into a git-ignored local
@@ -89,9 +95,20 @@ Read `SECURITY.md` for the contract and the limits.
 ## Develop
 
 ```
+python -m pip install -e ".[dev]"
+python -m ruff check src tests scripts && python -m ruff format --check src tests scripts
 python -m pytest -q
 pwsh -NoProfile -Command "Invoke-Pester -Path powershell/tests"
-python -m courier doctor        (from src/, or scripts\courier.cmd doctor)
+courier doctor                  (pip install puts `courier` on PATH; or scripts\courier.cmd doctor)
 ```
+
+CI runs the same on `windows-latest` for Python 3.11 and 3.13, plus a self-scan of the repo for
+secret-shaped values. See `CONTRIBUTING.md` for the rules that keep the plugin trustworthy and `CHANGELOG.md`
+for what changed.
+
+## Status
+
+0.1.0, Windows only. macOS and Linux need a keychain or libsecret backend and a shell wrapper for the hooks;
+the layout leaves room for both.
 
 MIT license.

@@ -76,7 +76,11 @@ def test_prompt_goes_through_the_console_spawner():
     res = bridge.prompt("my-key", "credman", description="GitHub PAT", runner=r)
     assert res.status == "opened"
     argv = r.calls[0]
-    assert argv[0].endswith("Start-CourierConsole.ps1") and "-ScriptPath" in argv and argv[argv.index("-ScriptPath") + 1].endswith("secret-prompt.ps1")
+    assert (
+        argv[0].endswith("Start-CourierConsole.ps1")
+        and "-ScriptPath" in argv
+        and argv[argv.index("-ScriptPath") + 1].endswith("secret-prompt.ps1")
+    )
     assert bridge.prompt("my-key", "env", runner=r).status == "error"
     assert bridge.prompt("my-key", "dpapi", description="x'y", runner=r).status == "error"
 
@@ -87,7 +91,9 @@ def test_cli_routes_and_exit_codes(monkeypatch, capsys):
     assert capsys.readouterr().out.strip() == "found credman"
     monkeypatch.setattr(bridge, "exists", lambda name, runner=None: bridge.Result("exists", "missing", ""))
     assert cli.main(["exists", "my-key"]) == 1
-    monkeypatch.setattr(bridge, "copy", lambda s, d, replace=False, runner=None: bridge.Result("copy", "error", "refused"))
+    monkeypatch.setattr(
+        bridge, "copy", lambda s, d, replace=False, runner=None: bridge.Result("copy", "error", "refused")
+    )
     assert cli.main(["copy", "dpapi:a", "env:B"]) == 2
     monkeypatch.setattr(bridge, "run_command", lambda env, cmd, runner=None: bridge.Result("run", "exit", "0"))
     assert cli.main(["run", "--env", "API_KEY=dpapi:a", "--", "npm", "start"]) == 0

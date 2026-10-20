@@ -42,7 +42,7 @@ class Result:
 
     @property
     def ok(self) -> bool:
-        return self.status in OK_STATUSES or self.status == "exit" and self.detail == "0"
+        return self.status in OK_STATUSES or (self.status == "exit" and self.detail == "0")
 
     def as_dict(self) -> dict[str, Any]:
         return {"op": self.op, "status": self.status, "detail": self.detail, "lines": list(self.lines)}
@@ -71,7 +71,9 @@ def check_spec(value: str, what: str, destination: bool = False) -> tuple[str, s
     if store not in STORES or not name:
         raise Refused(f"{what} must be <store>:<name> with store one of {', '.join(STORES)}")
     if destination and store not in WRITABLE:
-        raise Refused(f"{what}: {store} is never a destination (an environment variable or a vault would be readable later)")
+        raise Refused(
+            f"{what}: {store} is never a destination (an environment variable or a vault would be readable later)"
+        )
     if store == "keyvault":
         if not _KV_NAME.fullmatch(name):
             raise Refused(f"{what}: a keyvault name is <vault>/<secret>")
@@ -84,8 +86,13 @@ def check_spec(value: str, what: str, destination: bool = False) -> tuple[str, s
 
 
 def _default_runner(argv: list[str], capture: bool) -> tuple[str, str, int]:
-    r = subprocess.run(["pwsh", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", *argv],
-                       capture_output=capture, text=True, timeout=600, check=False)
+    r = subprocess.run(
+        ["pwsh", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", *argv],
+        capture_output=capture,
+        text=True,
+        timeout=600,
+        check=False,
+    )
     return (r.stdout or "") if capture else "", (r.stderr or "") if capture else "", r.returncode
 
 
@@ -149,6 +156,7 @@ def copy(source: str, dest: str, replace: bool = False, runner: Runner | None = 
         check_spec(source, "source")
         check_spec(dest, "destination", destination=True)
         return _run("copy", "secret-copy", [source, dest] + (["-Replace"] if replace else []), runner)
+
     return _guard("copy", go)
 
 
@@ -156,12 +164,20 @@ def remove(spec: str, runner: Runner | None = None) -> Result:
     def go() -> Result:
         check_spec(spec, "spec", destination=True)
         return _run("remove", "secret-remove", [spec], runner)
+
     return _guard("remove", go)
 
 
-def prompt(name: str, store: str = "dpapi", description: str = "", source: str = "", replace: bool = False,
-           runner: Runner | None = None) -> Result:
+def prompt(
+    name: str,
+    store: str = "dpapi",
+    description: str = "",
+    source: str = "",
+    replace: bool = False,
+    runner: Runner | None = None,
+) -> Result:
     """Open a console with the masked prompt; returns at once (``opened``)."""
+
     def go() -> Result:
         check_name(name, "name")
         if store not in WRITABLE:
@@ -180,6 +196,7 @@ def prompt(name: str, store: str = "dpapi", description: str = "", source: str =
         argv = [str(console_script()), "-Title", f"secret {name}", "-ScriptPath", script, "-Arguments", *args]
         stdout, stderr, code = (runner or _default_runner)(argv, True)
         return _parse("prompt", stdout, stderr, code)
+
     return _guard("prompt", go)
 
 
@@ -198,14 +215,25 @@ def test(name: str, endpoint: str, params: dict[str, str] | None = None, runner:
             url = url.replace("{" + key + "}", val)
         if "{" in url:
             raise Refused("endpoint url still has an unfilled placeholder")
-        args = [name, "-Url", url, "-Auth", str(ep.get("auth") or "bearer"), "-Expect", str(int(ep.get("expect") or 200))]
+        args = [
+            name,
+            "-Url",
+            url,
+            "-Auth",
+            str(ep.get("auth") or "bearer"),
+            "-Expect",
+            str(int(ep.get("expect") or 200)),
+        ]
         for k, v in (ep.get("headers") or {}).items():
             args += ["-Header", f"{k}={v}"]
         return _run("test", "secret-test", args, runner)
+
     return _guard("test", go)
 
 
-def inject(target: str, fmt: str, mapping: dict[str, str], replace: bool = False, runner: Runner | None = None) -> Result:
+def inject(
+    target: str, fmt: str, mapping: dict[str, str], replace: bool = False, runner: Runner | None = None
+) -> Result:
     def go() -> Result:
         if fmt not in ("dotenv", "json", "user-secrets"):
             raise Refused("format must be dotenv, json or user-secrets")
@@ -221,6 +249,7 @@ def inject(target: str, fmt: str, mapping: dict[str, str], replace: bool = False
             raise Refused("nothing to inject")
         args = ["-Target", target, "-Format", fmt, "-Map", *pairs] + (["-Replace"] if replace else [])
         return _run("inject", "secret-inject", args, runner)
+
     return _guard("inject", go)
 
 
@@ -229,11 +258,17 @@ def sinks(repo: str = "", runner: Runner | None = None) -> Result:
         if repo and not re.fullmatch(r"[\w.\\/: -]{1,200}", repo):
             raise Refused("repo filter has unexpected characters")
         return _run("sinks", "secret-sinks", ["-Repo", repo] if repo else [], runner)
+
     return _guard("sinks", go)
 
 
-def sweep(sink_id: str = "", older_days: int | None = None, repo: str = "", dry_run: bool = False,
-          runner: Runner | None = None) -> Result:
+def sweep(
+    sink_id: str = "",
+    older_days: int | None = None,
+    repo: str = "",
+    dry_run: bool = False,
+    runner: Runner | None = None,
+) -> Result:
     def go() -> Result:
         args: list[str] = []
         if sink_id:
@@ -247,11 +282,13 @@ def sweep(sink_id: str = "", older_days: int | None = None, repo: str = "", dry_
         if dry_run:
             args.append("-WhatIf")
         return _run("sweep", "secret-sweep", args, runner)
+
     return _guard("sweep", go)
 
 
 def run_command(env_map: dict[str, str], command: list[str], runner: Runner | None = None) -> Result:
     """Run ``command`` with the named values in its environment only; the child inherits the console."""
+
     def go() -> Result:
         if not command:
             raise Refused("nothing to run")
@@ -265,10 +302,28 @@ def run_command(env_map: dict[str, str], command: list[str], runner: Runner | No
         env_b64 = base64.b64encode(json.dumps(env_map).encode("utf-8")).decode("ascii")
         cmd_b64 = base64.b64encode(json.dumps(list(command)).encode("utf-8")).decode("ascii")
         return _run("run", "secret-run", ["-EnvSpec", env_b64, "-CommandSpec", cmd_b64], runner, capture=False)
+
     return _guard("run", go)
 
 
 __all__ = [
-    "OK_STATUSES", "STATUSES", "STORES", "Refused", "Result", "Runner", "check_name", "check_spec", "copy", "exists",
-    "inject", "load_endpoints", "names", "prompt", "remove", "run_command", "sinks", "sweep", "test",
+    "OK_STATUSES",
+    "STATUSES",
+    "STORES",
+    "Refused",
+    "Result",
+    "Runner",
+    "check_name",
+    "check_spec",
+    "copy",
+    "exists",
+    "inject",
+    "load_endpoints",
+    "names",
+    "prompt",
+    "remove",
+    "run_command",
+    "sinks",
+    "sweep",
+    "test",
 ]

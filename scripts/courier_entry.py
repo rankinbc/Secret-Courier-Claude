@@ -28,7 +28,7 @@ def main() -> int:
         from courier.guard import run
 
         return run(sys.argv)
-    except BaseException:  # noqa: BLE001 - fail closed on anything
+    except BaseException:
         if PROMPT_MODE in sys.argv:
             return 0
         print(INTERNAL_MSG, file=sys.stderr)

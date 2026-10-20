@@ -34,8 +34,12 @@ SECRET_VALUE_MSG = (
     "Blocked: the command contains a secret-shaped value ({rules}). "
     "Store it with `courier prompt <name>` and reference it by name (secret-courier)."
 )
-SECRET_FILE_MSG = "Blocked: that command reads a secret-bearing file. Claude handles secret NAMES only (secret-courier)."
-SCRIPT_FILE_MSG = "Blocked: the script that command runs {what}. Claude never runs a script that prints or decrypts secret values."
+SECRET_FILE_MSG = (
+    "Blocked: that command reads a secret-bearing file. Claude handles secret NAMES only (secret-courier)."
+)
+SCRIPT_FILE_MSG = (
+    "Blocked: the script that command runs {what}. Claude never runs a script that prints or decrypts secret values."
+)
 EXPOSES_MSG = "Blocked: that command exposes secret values ({what}). Claude handles secret NAMES only (secret-courier)."
 
 _SECRET_NAMES = POLICY.secret_env_names
@@ -61,14 +65,33 @@ _SAFE_PROGRAMS = frozenset(POLICY.metadata_programs)
 _SAFE_GIT = frozenset(POLICY.safe_git)
 _GIT_VALUE_FLAGS = frozenset({"-c", "-C", "--git-dir", "--work-tree", "--namespace"})
 _PWSH = frozenset({"pwsh", "powershell"})
-_PWSH_SKIP_FLAGS = frozenset({"-noprofile", "-nologo", "-noninteractive", "-sta", "-mta", "-file", "-f", "-command", "-c", "-noexit"})
+_PWSH_SKIP_FLAGS = frozenset(
+    {"-noprofile", "-nologo", "-noninteractive", "-sta", "-mta", "-file", "-f", "-command", "-c", "-noexit"}
+)
 _PWSH_VALUE_FLAGS = frozenset({"-executionpolicy", "-ep", "-ex", "-workingdirectory", "-wd", "-version", "-v"})
-_TRUSTED_SCRIPT_RE = re.compile(
-    r"(?:^|/)(?:" + "|".join(re.escape(d) for d in POLICY.trusted_script_dirs) + r")/[\w.-]+\.ps1$"
-) if POLICY.trusted_script_dirs else re.compile(r"(?!)")
+_TRUSTED_SCRIPT_RE = (
+    re.compile(r"(?:^|/)(?:" + "|".join(re.escape(d) for d in POLICY.trusted_script_dirs) + r")/[\w.-]+\.ps1$")
+    if POLICY.trusted_script_dirs
+    else re.compile(r"(?!)")
+)
 _SHELLS = frozenset({"bash", "sh", "zsh", "dash", "ksh"})
 _INTERPRETERS = frozenset(POLICY.interpreters) - _PWSH - _SHELLS - {"cmd"}
-_SCRIPT_SUFFIXES = (".ps1", ".py", ".js", ".mjs", ".cjs", ".ts", ".rb", ".pl", ".php", ".sh", ".bash", ".zsh", ".cmd", ".bat")
+_SCRIPT_SUFFIXES = (
+    ".ps1",
+    ".py",
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".ts",
+    ".rb",
+    ".pl",
+    ".php",
+    ".sh",
+    ".bash",
+    ".zsh",
+    ".cmd",
+    ".bat",
+)
 _MAX_SCRIPT_BYTES = 256 * 1024
 _MAX_DEPTH = 3
 _FLOW_OPS = frozenset({"|", "$(", "`"})

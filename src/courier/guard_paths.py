@@ -14,7 +14,9 @@ from courier.policy import POLICY, Policy
 
 READ_BLOCK_MSG = "Blocked: that file holds secret values. Use `courier exists <name>` for names only (secret-courier)."
 
-_HOME_PREFIX_RE = re.compile(r"(?i)^(?:~|\$HOME|\$\{HOME\}|%USERPROFILE%|\$env:USERPROFILE|\$\{env:USERPROFILE\})(?=/|$)")
+_HOME_PREFIX_RE = re.compile(
+    r"(?i)^(?:~|\$HOME|\$\{HOME\}|%USERPROFILE%|\$env:USERPROFILE|\$\{env:USERPROFILE\})(?=/|$)"
+)
 _COPY_SUFFIX = r"(?:\.(?:bak|backup|old|orig|tmp|save))?~?"
 _BRACE_RE = re.compile(r"\{([^{}]*)\}")
 _MAX_BRACE_ALTERNATIVES = 64
@@ -104,4 +106,12 @@ def check_glob(pattern: str) -> str | None:
     return None
 
 
-__all__ = ["ALLOWED_FILE_RE", "DENIED_FILE_RE", "READ_BLOCK_MSG", "canonical_forms", "check_glob", "check_read_path", "is_denied_path"]
+__all__ = [
+    "ALLOWED_FILE_RE",
+    "DENIED_FILE_RE",
+    "READ_BLOCK_MSG",
+    "canonical_forms",
+    "check_glob",
+    "check_read_path",
+    "is_denied_path",
+]

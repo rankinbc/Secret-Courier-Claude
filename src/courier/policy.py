@@ -20,8 +20,16 @@ DEFAULT_PATH = plugin_root() / "config" / "guard-policy.json"
 PASTE_MODES = ("advise", "block")
 
 _LIST_FIELDS = (
-    "denied_file_families", "denied_dirs", "denied_samples", "allowed_files", "allowed_dirs", "value_dump_tokens",
-    "interpreters", "metadata_programs", "safe_git", "trusted_script_dirs",
+    "denied_file_families",
+    "denied_dirs",
+    "denied_samples",
+    "allowed_files",
+    "allowed_dirs",
+    "value_dump_tokens",
+    "interpreters",
+    "metadata_programs",
+    "safe_git",
+    "trusted_script_dirs",
 )
 
 

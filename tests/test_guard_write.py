@@ -39,7 +39,11 @@ def test_secret_shaped_content_and_dump_tokens_are_blocked():
 
 
 def test_lock_files_and_tests_are_exempt_from_the_content_scan():
-    integrity = '"integrity": "sha512-' + "Qm9yaW5nQmFzZTY0U3RyaW5nVGhhdExvb2tzUmFuZG9tRW5vdWdoVG9UcmlwVGhlRW50cm9weVJ1bGU0MjAx" + '=="'
+    integrity = (
+        '"integrity": "sha512-'
+        + "Qm9yaW5nQmFzZTY0U3RyaW5nVGhhdExvb2tzUmFuZG9tRW5vdWdoVG9UcmlwVGhlRW50cm9weVJ1bGU0MjAx"
+        + '=="'
+    )
     assert check_write(r"C:\r\package-lock.json", "{" + integrity + "}", None, None) is None
     assert check_write("tests/test_new.py", f"TOKEN = '{fx.fake_jwt()}'", None, None) is None
     assert check_write("tests/.env", "X=1", None, None) is not None
@@ -48,10 +52,14 @@ def test_lock_files_and_tests_are_exempt_from_the_content_scan():
 def test_write_hook_payload_shapes(monkeypatch, capsys):
     monkeypatch.setattr("sys.stdin", io.StringIO("{}"))
     assert guard.main(["guard", "--write-hook"]) == 2
-    payload = {"tool_input": {"notebook_path": r"C:\r\nb.ipynb", "new_source": f"k = '{fx.fake_jwt()}'", "cell_id": "1"}}
+    payload = {
+        "tool_input": {"notebook_path": r"C:\r\nb.ipynb", "new_source": f"k = '{fx.fake_jwt()}'", "cell_id": "1"}
+    }
     monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
     assert guard.main(["guard", "--write-hook"]) == 2
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"tool_input": {"file_path": r"C:\r\src\a.py", "content": "print('hi')"}})))
+    monkeypatch.setattr(
+        "sys.stdin", io.StringIO(json.dumps({"tool_input": {"file_path": r"C:\r\src\a.py", "content": "print('hi')"}}))
+    )
     assert guard.main(["guard", "--write-hook"]) == 0
 
 

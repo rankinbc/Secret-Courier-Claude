@@ -22,7 +22,9 @@ from courier.guard_bash import check_bash_command, secret_findings
 from courier.guard_paths import check_glob, check_read_path
 from courier.guard_write import check_write
 
-INTERNAL_ERROR_MSG = "Blocked: the secret-courier guard could not evaluate this call (internal error), so it is refused."
+INTERNAL_ERROR_MSG = (
+    "Blocked: the secret-courier guard could not evaluate this call (internal error), so it is refused."
+)
 NO_COMMAND_MSG = "Blocked: the secret-courier guard received no command to check."
 PROMPT_BLOCK_MSG = (
     "Blocked: the message carries a secret-shaped value ({rules}) and was not delivered (guard policy paste: block). "
@@ -31,7 +33,8 @@ PROMPT_BLOCK_MSG = (
 PROMPT_ADVICE = (
     "[secret-courier paste interceptor] The message appears to contain a secret-shaped value ({rules}). Do not use, "
     "repeat, store, or reason with the value. Explain in one short paragraph why it must not be in the transcript, "
-    "then run `courier prompt <name>` so the developer enters it in a masked console prompt, and continue with the NAME."
+    "then run `courier prompt <name>` so the developer enters it in a masked console prompt, and continue with "
+    "the NAME."
 )
 # Background-agent completion notices carry tool ids that read as high-entropy tokens; they are harness traffic.
 _HARNESS_NOISE_RE = re.compile(r"(?s)<task-notification>.*?</task-notification>|\btoolu_\w+|\bagentId:\s*\S+")
@@ -132,13 +135,21 @@ def run(argv: list[str] | None = None) -> int:
     argv = sys.argv if argv is None else argv
     try:
         return main(argv)
-    except BaseException:  # noqa: BLE001
+    except BaseException:
         if "--prompt-hook" in argv:
             return 0
         return _block(INTERNAL_ERROR_MSG)
 
 
-__all__ = ["INTERNAL_ERROR_MSG", "PROMPT_BLOCK_MSG", "check_bash_command", "main", "prompt_context", "prompt_findings", "run"]
+__all__ = [
+    "INTERNAL_ERROR_MSG",
+    "PROMPT_BLOCK_MSG",
+    "check_bash_command",
+    "main",
+    "prompt_context",
+    "prompt_findings",
+    "run",
+]
 
 if __name__ == "__main__":
     sys.exit(run())

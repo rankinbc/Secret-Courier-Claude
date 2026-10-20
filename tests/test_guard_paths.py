@@ -15,10 +15,23 @@ from courier.policy import POLICY
 @pytest.mark.parametrize(
     "path",
     [
-        r"C:\Users\x\.secret-courier\secrets.json", "./.env", "/repo/.env.local", r"C:\r\Api\appsettings.local.json",
-        r"C:\r\local.settings.json", r"C:\r\.git\config", r"C:\Users\x\.azure\msal.cache", r"C:\r\cert.pfx",
-        "~/.ssh/id_rsa", "~/.netrc", "/home/x/.pgpass", "infra/terraform.tfvars", "android/release.keystore",
-        "C:/r/.env.bak", "C:/r/.ENV", "C:/r/.env.", "/proc/self/environ",
+        r"C:\Users\x\.secret-courier\secrets.json",
+        "./.env",
+        "/repo/.env.local",
+        r"C:\r\Api\appsettings.local.json",
+        r"C:\r\local.settings.json",
+        r"C:\r\.git\config",
+        r"C:\Users\x\.azure\msal.cache",
+        r"C:\r\cert.pfx",
+        "~/.ssh/id_rsa",
+        "~/.netrc",
+        "/home/x/.pgpass",
+        "infra/terraform.tfvars",
+        "android/release.keystore",
+        "C:/r/.env.bak",
+        "C:/r/.ENV",
+        "C:/r/.env.",
+        "/proc/self/environ",
     ],
 )
 def test_secret_files_are_denied(path):
@@ -27,8 +40,15 @@ def test_secret_files_are_denied(path):
 
 @pytest.mark.parametrize(
     "path",
-    [".env.example", r"C:\Users\x\.secret-courier\secrets.manifest.json", r"C:\Users\x\.secret-courier\sinks.json",
-     r"C:\r\appsettings.json", r"C:\r\src\a.cs", r"C:\r\tests\fixtures\m\.env", "README.md"],
+    [
+        ".env.example",
+        r"C:\Users\x\.secret-courier\secrets.manifest.json",
+        r"C:\Users\x\.secret-courier\sinks.json",
+        r"C:\r\appsettings.json",
+        r"C:\r\src\a.cs",
+        r"C:\r\tests\fixtures\m\.env",
+        "README.md",
+    ],
 )
 def test_ordinary_files_are_allowed(path):
     assert check_read_path(path) is None, path

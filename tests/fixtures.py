@@ -15,7 +15,14 @@ def _alnum(n: int, alphabet: str = string.ascii_letters + string.digits) -> str:
 
 def fake_jwt() -> str:
     seg = lambda o: base64.urlsafe_b64encode(o.encode()).decode().rstrip("=")  # noqa: E731
-    return "eyJ" + seg('{"alg":"HS256","typ":"JWT"}')[3:] + "." + seg('{"sub":"pester","iat":1700000000}') + "." + _alnum(43)
+    return (
+        "eyJ"
+        + seg('{"alg":"HS256","typ":"JWT"}')[3:]
+        + "."
+        + seg('{"sub":"pester","iat":1700000000}')
+        + "."
+        + _alnum(43)
+    )
 
 
 def fake_pat() -> str:
@@ -27,7 +34,10 @@ def fake_storage_key() -> str:
 
 
 def fake_storage_conn() -> str:
-    return f"DefaultEndpointsProtocol=https;AccountName=fakeacct;AccountKey={fake_storage_key()};EndpointSuffix=core.windows.net"
+    return (
+        "DefaultEndpointsProtocol=https;AccountName=fakeacct;"
+        f"AccountKey={fake_storage_key()};EndpointSuffix=core.windows.net"
+    )
 
 
 def fake_aws_sts_id() -> str:

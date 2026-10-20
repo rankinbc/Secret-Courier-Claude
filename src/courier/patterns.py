@@ -102,7 +102,12 @@ SECRET_VALUE_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("kv_secret", re.compile("(?i)" + KV_SECRET_SRC)),
     ("func_code", re.compile(rf"(?i)[?&](?:code|x-functions-key)={_NOT_MASK}[A-Za-z0-9_%\-]{{20,}}")),
     ("url_userinfo", URL_USERINFO_RE),
-    ("private_key", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED |PGP |DSA )?PRIVATE KEY(?: BLOCK)?-----|PuTTY-User-Key-File-\d")),
+    (
+        "private_key",
+        re.compile(
+            r"-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED |PGP |DSA )?PRIVATE KEY(?: BLOCK)?-----|PuTTY-User-Key-File-\d"
+        ),
+    ),
     ("appinsights", re.compile(rf"(?i)instrumentationkey\s*=\s*{_NOT_MASK}[0-9a-f\-]{{36}}")),
     (
         "guid_secret",
@@ -121,7 +126,12 @@ SECRET_VALUE_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
             r"pypi-[A-Za-z0-9_\-]{50,})\b"
         ),
     ),
-    ("http_auth", re.compile(rf"(?i)(?P<keep>\bauthorization\s*[:=]\s*[\"']?(?:bearer|basic)\s+){_NOT_MASK}(?![$<\[{{%])[A-Za-z0-9+/=_\-.]{{16,}}")),
+    (
+        "http_auth",
+        re.compile(
+            rf"(?i)(?P<keep>\bauthorization\s*[:=]\s*[\"']?(?:bearer|basic)\s+){_NOT_MASK}(?![$<\[{{%])[A-Za-z0-9+/=_\-.]{{16,}}"
+        ),
+    ),
     (
         "assign_secret",
         re.compile(
@@ -228,6 +238,16 @@ def iter_opaque(text: str) -> Iterator[re.Match[str]]:
 
 
 __all__ = [
-    "CONN_SECRET_RE", "KV_SECRET_SRC", "MASK", "PLACEHOLDER_RE", "SECRET_VALUE_PATTERNS", "URL_USERINFO_RE",
-    "is_high_entropy_token", "is_secret_name", "is_word_shaped", "iter_high_entropy", "iter_opaque", "normalize_key",
+    "CONN_SECRET_RE",
+    "KV_SECRET_SRC",
+    "MASK",
+    "PLACEHOLDER_RE",
+    "SECRET_VALUE_PATTERNS",
+    "URL_USERINFO_RE",
+    "is_high_entropy_token",
+    "is_secret_name",
+    "is_word_shaped",
+    "iter_high_entropy",
+    "iter_opaque",
+    "normalize_key",
 ]

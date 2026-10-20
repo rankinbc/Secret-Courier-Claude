@@ -29,8 +29,30 @@ _CONN_LEAK_RE = re.compile(
     "|" + KV_SECRET_SRC
 )
 _EXCLUDE_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache", ".ruff_cache", "dist", "build"}
-_TEXT_SUFFIXES = {".json", ".jsonl", ".yaml", ".yml", ".md", ".txt", ".csv", ".log", ".ps1", ".psm1", ".py", ".toml",
-                  ".env", ".sql", ".cmd", ".sh", ".ini", ".cfg", ".xml", ".properties", ".ts", ".js"}
+_TEXT_SUFFIXES = {
+    ".json",
+    ".jsonl",
+    ".yaml",
+    ".yml",
+    ".md",
+    ".txt",
+    ".csv",
+    ".log",
+    ".ps1",
+    ".psm1",
+    ".py",
+    ".toml",
+    ".env",
+    ".sql",
+    ".cmd",
+    ".sh",
+    ".ini",
+    ".cfg",
+    ".xml",
+    ".properties",
+    ".ts",
+    ".js",
+}
 IGNORE_MARKER = "courier-scan: ignore-file"
 
 
@@ -129,7 +151,9 @@ def scan_paths(paths: list[str | Path]) -> list[Finding]:
 def main(argv: list[str] | None = None) -> int:
     import argparse
 
-    ap = argparse.ArgumentParser(prog="courier scan", description="Scan files for secret-shaped values (never prints a value).")
+    ap = argparse.ArgumentParser(
+        prog="courier scan", description="Scan files for secret-shaped values (never prints a value)."
+    )
     ap.add_argument("paths", nargs="+")
     ap.add_argument("--fail-on-findings", action="store_true")
     ap.add_argument("--json", action="store_true")
@@ -144,7 +168,17 @@ def main(argv: list[str] | None = None) -> int:
     return 1 if (findings and args.fail_on_findings) else 0
 
 
-__all__ = ["Finding", "IGNORE_MARKER", "main", "redact", "sanitize_text", "scan_file", "scan_paths", "scan_strict", "scan_text"]
+__all__ = [
+    "IGNORE_MARKER",
+    "Finding",
+    "main",
+    "redact",
+    "sanitize_text",
+    "scan_file",
+    "scan_paths",
+    "scan_strict",
+    "scan_text",
+]
 
 if __name__ == "__main__":
     sys.exit(main())
