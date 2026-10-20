@@ -1,5 +1,6 @@
 {
   "name": "secret-courier",
+  "description": "secret-courier: move secrets by name so Claude never sees a value and nothing is left lying around.",
   "owner": { "name": "Brian Rankin" },
   "plugins": [
     {

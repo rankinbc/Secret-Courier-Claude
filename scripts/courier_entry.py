@@ -24,6 +24,13 @@ def main() -> int:
 
         argv = [a for a in sys.argv[1:] if a != "--cli"]
         return cli_main(argv)
+    if "--session-start" in sys.argv:
+        try:
+            from courier.session import main as session_main
+
+            return session_main()
+        except BaseException:  # a readiness line must never break a session
+            return 0
     try:
         from courier.guard import run
 

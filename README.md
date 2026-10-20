@@ -26,11 +26,14 @@ only.
 ## Install
 
 ```
-claude plugin marketplace add <this repository URL>
+claude plugin marketplace add <github-owner>/secret-courier      (or the repository URL, or a local clone path)
 claude plugin install secret-courier@secret-courier
 ```
 
-Restart Claude Code. Then, in a session: `/courier doctor`.
+Restart Claude Code. The first line of the next session says whether the guard is live; `/courier doctor`
+checks every probe. Installing registers everything: the PreToolUse hooks for Bash, PowerShell, Read, Grep,
+Glob, Write, Edit and NotebookEdit, the paste hook, the `/courier` command and the `secret-courier` skill.
+Nothing is written to your machine until the first `courier prompt` creates `~/.secret-courier`.
 
 ## Use
 
